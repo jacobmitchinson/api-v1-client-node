@@ -9,6 +9,7 @@ describe('blockExplorer', function() {
   var apiQuery = '&api_code=' + apiCode;
   var height  = '1234';
   var txId    = 'tr4n64ct1on';
+  var address = "1AJbsFZ";
   var rootURL = 'https://blockchain.info/';
   var json = {'success': 'true'}
 
@@ -40,6 +41,31 @@ describe('blockExplorer', function() {
     mockEndPoint(rootURL + 'block-height/', height 
                   + '?format=json' + apiQuery);
     blockExplorer.getBlockHeight(height, apiCode, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
+
+  it('should get address', function(done) { 
+    var limit = 1; 
+    var offset = 2;
+    var options = { 'limit': limit,
+                    'offset': offset,
+                    'apiCode': apiCode
+                  }
+    mockEndPoint(rootURL + 'address/', address + '?format=json' + '&limit=' + limit 
+                  + '&offset=' + offset + apiQuery);
+    blockExplorer.getAddress(options, address, function(err, data) {
+      expect(data).to.eql(json);
+      done();
+    });
+  });
+
+  it('should get multiple addresses', function(done) {
+    multiAddress = ['address1', 'address2'];
+    mockEndPoint(rootURL, 'multiaddr?active=' 
+                  + multiAddress[0] + '%7C' + multiAddress[1] + apiQuery);
+    blockExplorer.getMultiAddress(multiAddress, apiCode, function(err, data) {
       expect(data).to.eql(json);
       done();
     });
