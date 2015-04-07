@@ -96,4 +96,49 @@ describe('blockExplorer', function() {
       done();
     });
   });
-}); 
+
+  it('should get blocks with pool name', function(done) { 
+    var options = {
+                    'pool': 'blocks', 
+                    'time': '1234',
+                    'apiCode': apiCode
+                  };
+    mockEndPoint(rootURL + 'blocks/', options.pool 
+                  + '?format=json' + '&time_in_milliseconds=' + options.time + apiQuery);
+    blockExplorer.getBlocks(options, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
+
+  it('should get blocks by time', function(done) { 
+    var options = {
+                    'time': '1234',
+                    'apiCode': apiCode
+                  };
+    mockEndPoint(rootURL + 'blocks/', 
+                  + options.time + '?format=json' + apiQuery);
+    blockExplorer.getBlocks(options, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
+
+  it('should return an error if there is no pool name or time', function(done) {
+    var options = {};
+    blockExplorer.getBlocks(options, function(err, data) { 
+      expect(err).to.equal('err: Must include time or pool');
+      done();
+    });
+  });
+
+  it('should get inventory data', function(done) { 
+    var hash = 'd1d556ea';
+    mockEndPoint(rootURL + 'inv/', hash + '?format=json'
+                  + apiQuery);
+    blockExplorer.getInventoryData(hash, apiCode, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
+});   
