@@ -71,6 +71,13 @@ describe('blockExplorer', function() {
     });
   });
 
-
-
+  it('should get unspent outputs', function(done) { 
+    var unspent = ['unspent1', 'unspent2'];
+    mockEndPoint(rootURL, 'unspent?active=' 
+                  + unspent[0] + '%7C' + unspent[1] + apiQuery);
+    blockExplorer.getUnspentOutputs(unspent, apiCode, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    }); 
+  });
 }); 
