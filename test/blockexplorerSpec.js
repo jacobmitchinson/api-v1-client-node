@@ -80,4 +80,12 @@ describe('blockExplorer', function() {
       done();
     }); 
   });
+
+  it('should get latest block', function(done) { 
+    mockEndPoint(rootURL, 'latestblock?a=1' + apiQuery);
+    blockExplorer.getLatestBlock(apiCode, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
 }); 
