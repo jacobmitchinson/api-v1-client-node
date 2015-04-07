@@ -88,4 +88,12 @@ describe('blockExplorer', function() {
       done();
     });
   });
+
+  it('should get unconfirmed transactions', function(done) { 
+    mockEndPoint(rootURL, 'unconfirmed-transactions?format=json' + apiQuery);
+    blockExplorer.getUnconfirmedTx(apiCode, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
 }); 
