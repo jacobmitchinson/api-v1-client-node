@@ -22,4 +22,8 @@ describe('Wallet', function() {
   it('can initialize with a guid', function() { 
     expect(wallet.guid).to.equal('guid');
   });
+
+  it('can initialize with a password', function() { 
+    expect(wallet.pass).to.equal('pass1');    
+  });
 });
