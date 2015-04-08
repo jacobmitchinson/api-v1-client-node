@@ -24,5 +24,10 @@
   "dependencies": {
     "request": "^2.53.0"
   },
-  "engine": "node 0.10.36"
+  "engine": "node 0.10.36",
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "mocha": "^2.2.1",
+    "nock": "^1.5.0"
+  }
 }
