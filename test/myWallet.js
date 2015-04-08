@@ -44,4 +44,20 @@ describe('Wallet', function() {
       done();
     });
   });
+
+  it('can send btc', function(done) { 
+    var options = { 
+                    'amount': 3,
+                    'inBTC': true,
+                    'to': '1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq'
+                  }
+    var satoshi = options.amount * SATOSHI_PER_BTC;
+    mockEndPoint(rootUrl, 'merchant/' + guid + '/payment?password=' + pass 
+            + '&second_password=' + pass2 + '&address=' + options.to 
+            + '&amount=' + satoshi);
+    wallet.send(options, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
 });
