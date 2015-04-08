@@ -26,4 +26,8 @@ describe('Wallet', function() {
   it('can initialize with a password', function() { 
     expect(wallet.pass).to.equal('pass1');    
   });
+
+  it('can initialize with a second password', function() { 
+    expect(wallet.pass2).to.equal('pass2'); 
+  });
 });
