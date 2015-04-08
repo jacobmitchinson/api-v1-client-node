@@ -29,5 +29,19 @@ describe('Wallet', function() {
 
   it('can initialize with a second password', function() { 
     expect(wallet.pass2).to.equal('pass2'); 
+  }); 
+
+  it('can send satoshi', function(done) { 
+    var options = { 
+                    'amount': 397899,
+                    'to': '1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq'
+                  }
+    mockEndPoint(rootUrl, 'merchant/' + guid + '/payment?password=' + pass 
+                + '&second_password=' + pass2 + '&address=' + options.to 
+                + '&amount=' + options.amount);
+    wallet.send(options, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
   });
 });
