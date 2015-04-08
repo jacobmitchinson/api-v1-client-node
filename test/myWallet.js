@@ -34,11 +34,15 @@ describe('Wallet', function() {
   it('can send satoshi', function(done) { 
     var options = { 
                     'amount': 397899,
-                    'to': '1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq'
+                    'to': '1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq',
+                    'from': '1LRDHxrFcHNusQ2pWveKoMt7ryQc3gQv5t',
+                    'fee': 20000,
+                    'note': 'heythere'
                   }
     mockEndPoint(rootUrl, 'merchant/' + guid + '/payment?password=' + pass 
                 + '&second_password=' + pass2 + '&address=' + options.to 
-                + '&amount=' + options.amount);
+                + '&amount=' + options.amount + '&from=' + options.from
+                + '&fee=' + options.fee + '&note=' + options.note);
     wallet.send(options, function(err, data) { 
       expect(data).to.eql(json);
       done();
@@ -49,12 +53,17 @@ describe('Wallet', function() {
     var options = { 
                     'amount': 3,
                     'inBTC': true,
-                    'to': '1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq'
+                    'to': '1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq', 
+                    'from': '1LRDHxrFcHNusQ2pWveKoMt7ryQc3gQv5t',
+                    'fee': 0.0002,
+                    'note': 'heythere'
                   }
+    var fee = options.fee * SATOSHI_PER_BTC;
     var satoshi = options.amount * SATOSHI_PER_BTC;
     mockEndPoint(rootUrl, 'merchant/' + guid + '/payment?password=' + pass 
             + '&second_password=' + pass2 + '&address=' + options.to 
-            + '&amount=' + satoshi);
+            + '&amount=' + satoshi + '&from=' + options.from
+            + '&fee=' + fee + '&note=' + options.note);
     wallet.send(options, function(err, data) { 
       expect(data).to.eql(json);
       done();
