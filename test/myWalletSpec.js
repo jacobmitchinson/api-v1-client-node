@@ -15,10 +15,10 @@ describe('Wallet', function() {
   var to = '1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq';
   var from = '1LRDHxrFcHNusQ2pWveKoMt7ryQc3gQv5t';
 
-  function mockEndPoint(url, queryString) { 
+  function mockEndPoint(url, queryString, response) { 
     nock(url)
       .get('/' + queryString)
-      .reply(200, json);
+      .reply(200, response);
   };
 
   // need to refactor tests to DRY out code
@@ -43,10 +43,11 @@ describe('Wallet', function() {
                     'fee': 20000,
                     'note': 'heythere'
                   }
-    mockEndPoint(rootUrl, 'merchant/' + guid + '/payment?password=' + pass 
+    var queryString = 'merchant/' + guid + '/payment?password=' + pass 
                 + '&second_password=' + pass2 + '&address=' + to 
                 + '&amount=' + options.amount + '&from=' + from
-                + '&fee=' + options.fee + '&note=' + options.note);
+                + '&fee=' + options.fee + '&note=' + options.note;
+    mockEndPoint(rootUrl, queryString, json);
     wallet.send(options, function(err, data) { 
       expect(data).to.eql(json);
       done();
@@ -64,10 +65,11 @@ describe('Wallet', function() {
                   }
     var fee = options.fee * SATOSHI_PER_BTC;
     var satoshi = options.amount * SATOSHI_PER_BTC;
-    mockEndPoint(rootUrl, 'merchant/' + guid + '/payment?password=' + pass 
-                  + '&second_password=' + pass2 + '&address=' + to 
-                  + '&amount=' + satoshi + '&from=' + from
-                  + '&fee=' + fee + '&note=' + options.note);
+    var queryString = 'merchant/' + guid + '/payment?password=' + pass 
+                        + '&second_password=' + pass2 + '&address=' + to 
+                        + '&amount=' + satoshi + '&from=' + from
+                        + '&fee=' + fee + '&note=' + options.note;
+    mockEndPoint(rootUrl, queryString, json);
     wallet.send(options, function(err, data) { 
       expect(data).to.eql(json);
       done();
@@ -83,11 +85,11 @@ describe('Wallet', function() {
                         "1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq": 397899,
                         "15mSKoziUNLv28ZAHggdgo11vER3GgNCgH": 397899
                       }
-    mockEndPoint(rootUrl, 'merchant/' + guid + '/sendmany?password=' + pass
-                  + '&second_password=' + pass2 + '&recipients=' + '%7B%221A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq%22%3A39789'
-                  + '9%2C%2215mSKoziUNLv28ZAHggdgo11vER3GgNCgH%22%3A397899%7D' + '&from=' + from
-                  + '&fee=' + options.fee + '&note=' + options.note);
-
+    var queryString = 'merchant/' + guid + '/sendmany?password=' + pass
+                        + '&second_password=' + pass2 + '&recipients=' + '%7B%221A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq%22%3A39789'
+                        + '9%2C%2215mSKoziUNLv28ZAHggdgo11vER3GgNCgH%22%3A397899%7D' + '&from=' + from
+                        + '&fee=' + options.fee + '&note=' + options.note
+    mockEndPoint(rootUrl, queryString, json);
     wallet.sendMany(options, recipients, function(err, data) { 
       expect(data).to.eql(json);
       done();
@@ -104,14 +106,67 @@ describe('Wallet', function() {
                         "1A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq": 1,
                         "15mSKoziUNLv28ZAHggdgo11vER3GgNCgH": 1
                       }
-    mockEndPoint(rootUrl, 'merchant/' + guid + '/sendmany?password=' + pass
-                  + '&second_password=' + pass2 + '&recipients=' + '%7B%221A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq%22%3A100000000'
-                  + '%2C%2215mSKoziUNLv28ZAHggdgo11vER3GgNCgH%22%3A100000000%7D' + '&from=' + from
-                  + '&fee=' + options.fee + '&note=' + options.note);
+    var queryString = 'merchant/' + guid + '/sendmany?password=' + pass
+                        + '&second_password=' + pass2 + '&recipients=' + '%7B%221A8JiWcwvpY7tAopUkSnGuEYHmzGYfZPiq%22%3A100000000'
+                        + '%2C%2215mSKoziUNLv28ZAHggdgo11vER3GgNCgH%22%3A100000000%7D' + '&from=' + from
+                        + '&fee=' + options.fee + '&note=' + options.note;
+    mockEndPoint(rootUrl, queryString, json);
     wallet.sendMany(options, recipients, function(err, data) { 
       expect(data).to.eql(json);
       done();
     });
   });
+
+  //
  
+  it('can get the balance of the wallet in satoshi', function(done) { 
+    var queryString = 'merchant/' + guid + '/balance?password=' + pass;
+    var json = {"balance":2000};
+    mockEndPoint(rootUrl, queryString, json)
+    wallet.getBalance(function(err, data) { 
+      expect(data).to.equal(2000);
+      done();
+    });
+  });
+
+  it('can get the balance of the wallet in btc', function(done) { 
+    var queryString = 'merchant/' + guid + '/balance?password=' + pass;
+    var json = {"balance":2000};
+    mockEndPoint(rootUrl, queryString, json);
+    wallet.getBalance(true, function(err, data) { 
+      expect(data).to.equal(0.00002);
+      done();
+    });
+  });
+
+  it('can raise an error if the endpoint cannot be reached', function(done) { 
+    var queryString = 'merchant/' + guid + '/balance?password=' + pass;
+    var json = {"balance":2000};
+    wallet.getBalance(true, function(err, data) { 
+      expect(err).to.be.ok;
+      done();
+    });
+  });
+
+  it('can list the balance of addresses', function(done) { 
+    var queryString = 'merchant/' + guid + '/list?password=' + pass;
+    mockEndPoint(rootUrl, queryString, json);
+    wallet.listAddresses(function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
+
+  it('can get the balance of an address', function() {};unction(done) { 
+    var address = "19r7jAbPDtfTKQ9VJpvDzFFxCjUJFKesVZ";
+    var confirmations = 8;
+    var queryString = 'merchant/' + guid + '/address_balance?password=' 
+                        + pass + '&address=' + address + '&confirmations=' + confirmations;
+    mockEndPoint(rootUrl, queryString, json);
+    wallet.getAddress(address, confirmations, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
+
 });
