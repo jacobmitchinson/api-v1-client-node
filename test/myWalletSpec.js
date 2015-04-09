@@ -157,7 +157,7 @@ describe('Wallet', function() {
     });
   });
 
-  it('can get the balance of an address', function() {};unction(done) { 
+  it('can get the balance of an address', function(done) { 
     var address = "19r7jAbPDtfTKQ9VJpvDzFFxCjUJFKesVZ";
     var confirmations = 8;
     var queryString = 'merchant/' + guid + '/address_balance?password=' 
@@ -168,5 +168,18 @@ describe('Wallet', function() {
       done();
     });
   });
+
+  it('can get a new address', function(done) { 
+    var label = 'label';
+    var queryString = 'merchant/' + guid + '/new_address?password=' 
+                        + pass + '&second_password=' + pass2 + '&label=' + label;
+    mockEndPoint(rootUrl, queryString, json);
+    wallet.newAddress(label, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
+
+  
 
 });
