@@ -180,6 +180,40 @@ describe('Wallet', function() {
     });
   });
 
-  
+  it('can get an archive address', function(done) { 
+    var address = to;
+    var queryString = 'merchant/' + guid 
+                      + '/archive_address?password=' + pass
+                      + '&second_password=' + pass2 + '&address=' + address;
+    mockEndPoint(rootUrl, queryString, json);
+    wallet.archiveAddress(address, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    }); 
+  });
 
+
+  it('can get an unarchive address', function(done) { 
+    var address = to;
+    var queryString = 'merchant/' + guid 
+                      + '/unarchive_address?password=' + pass
+                      + '&second_password=' + pass2 + '&address=' + address;
+    mockEndPoint(rootUrl, queryString, json);
+    wallet.unarchiveAddress(address, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    }); 
+  });
+
+  it('should consolidate addresses', function(done) { 
+    var days = 12;
+    var queryString = 'merchant/' + guid 
+                      + '/auto_consolidate?password=' + pass
+                      + '&second_password=' + pass2 + '&days=' + days;
+    mockEndPoint(rootUrl, queryString, json);
+    wallet.consolidate(days, function(err, data) { 
+      expect(data).to.eql(json);
+      done();
+    });
+  });
 });
