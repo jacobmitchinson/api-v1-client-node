@@ -13,6 +13,12 @@ $ npm install blockchain.info
 ```
 var blockchain = require('blockchain.info');
 ```
+## Test
+
+```
+mocha test
+```
+
 
 ## Callback functions
 
