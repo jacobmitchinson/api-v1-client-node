@@ -31,4 +31,6 @@ describe('CreateWallet', function() {
       done();
     });
   });
+
+  it('should open a wallet');
 });
