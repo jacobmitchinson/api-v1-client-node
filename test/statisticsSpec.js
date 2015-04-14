@@ -2,7 +2,7 @@ var expect = require('chai').expect;
 var nock = require('nock');
 var statistics = require('../lib/statistics');
 
-describe('PushTX', function() { 
+describe('Statistics', function() { 
 
   var rootURL = 'https://blockchain.info/';
   var transaction = 'transaction'; 
@@ -12,7 +12,7 @@ describe('PushTX', function() {
   var chart = {
                 "values" : [
                   {
-                    "x" : 1290602498, //Unix timestamp
+                    "x" : 1290602498,
                     "y" : 1309696.2116000003
                   }]
               }
@@ -43,15 +43,24 @@ describe('PushTX', function() {
     });
   }); 
 
-  it('should get chart data', function() { 
+  it('should get chart data', function(done) { 
     var chartType = "total-bitcoin";
     mockEndPoint(rootURL, 'charts/' + chartType + '?format=json', chart);
-    statistics.getChartData(chartType, function(err, done) { 
-      expect(chart).to.eql(chart);
+    statistics.getChartData(chartType, function(err, data) { 
+      expect(data).to.eql(chart);
       done();
     });
   });
 
-  it('should get chart data with domain');
+  it('should get chart data within range', function(done) { 
+    var domain = [1290502498,
+                  1390502498];
+    var chartType = "total-bitcoin";
+    mockEndPoint(rootURL, 'charts/' + chartType + '?format=json', chart);
+    statistics.getChartData(chartType, domain, function(err, data) { 
+      expect(data).to.eql(chart);
+      done();
+    });
+  });
 });
 
